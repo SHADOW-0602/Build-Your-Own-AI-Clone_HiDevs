@@ -7,3 +7,4 @@ langchain-groq
 python-dotenv
 arize-phoenix
 openai
+arize-phoenix
