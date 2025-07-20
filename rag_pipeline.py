@@ -1,4 +1,7 @@
 import os
+__import__('pysqlite3')
+import sys
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 from dotenv import load_dotenv
 from langchain_community.document_loaders import WikipediaLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -7,13 +10,10 @@ from langchain_chroma import Chroma
 from langchain_groq import ChatGroq
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
-from prompt_manager import create_prompt_template
+from phoenix.experiments.evaluators import CoherenceEvaluator, RelevanceEvaluator
+from phoenix.evals.models import OpenAIModel
 import phoenix as px
-from phoenix.evals import (
-    RelevanceEvaluator,
-    CoherenceEvaluator,
-    OpenAIModel
-)
+from langchain_core.prompts import PromptTemplate
 
 # Load environment variables from the .env file
 load_dotenv()
@@ -63,6 +63,21 @@ def setup_rag_chain():
     )
 
     return rag_chain
+
+def create_prompt_template():
+    """
+    Returns a formatted PromptTemplate for the RAG pipeline.
+    """
+    prompt_template = PromptTemplate(
+        input_variables=["context", "question"],
+        template=(
+            "You are a helpful assistant. Use the following context to answer the question.\n\n"
+            "Context:\n{context}\n\n"
+            "Question:\n{question}\n\n"
+            "Answer as concisely as possible."
+        )
+    )
+    return prompt_template    
 
 def evaluate_rag_response(question, response, context, openai_api_key=None):
     """
