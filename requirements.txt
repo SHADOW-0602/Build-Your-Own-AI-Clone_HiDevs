@@ -6,5 +6,9 @@ langchain-chroma
 langchain-groq
 python-dotenv
 arize-phoenix
+arize-phoenix-evals
 openai
-arize-phoenix
+pysqlite3-binary
+wikipedia  # used indirectly via WikipediaLoader
+sentence-transformers  # HuggingFace model
+chromadb
